@@ -1,30 +1,22 @@
 #!/bin/bash
 
 function startApacheLinux () {
-  sudo service apache2 start > /dev/null 2>&1
+  # NOTE: if you are running on Arch uncomment this
+  #sudo systemctl start apache > /dev/null 2>&1
+  # and comment this one out
+  sudo systemctl start apache2 > /dev/null 2>&1
 }
 
 function startPostgreSQLLinux () {
-  sudo service postgresql start > /dev/null 2>&1
-}
-
-function startApacheOSX () {
-  sudo apachectl start > /dev/null 2>&1
-}
-
-function startPostgreSQLOSX () {
-  brew services restart postgresql > /dev/null 2>&1
+  sudo systemctl start postgresql > /dev/null 2>&1
 }
 
 function main () {
   if [ $1 == "linux" ]; then
     startApacheLinux;
     startPostgreSQLLinux;
-  elif [ $1 == "darwin" ]; then
-    startApacheOSX;
-    startPostgreSQLOSX;
   else
-    echo "[*} invalid operating system";
+    echo "[*] invalid operating system";
   fi
 }
 

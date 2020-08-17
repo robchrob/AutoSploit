@@ -1,17 +1,17 @@
-FROM kalilinux/kali-linux-docker
+FROM phocean/msf
 
-RUN apt update && apt install -y postgresql \
-								 apache2 \
-								 python-pip \
-								 python-dev \
-								 build-essential \
-								 git \
-								 metasploit-framework
+COPY "entrypoint.sh" .
 
-RUN git clone https://github.com/NullArray/AutoSploit.git && pip install requests psutil
-COPY database.yml /root/.msf4/database.yml
-WORKDIR AutoSploit
-EXPOSE 80 443 4444
+RUN apt-get update && \
+ 	apt-get install -y \
+					git \
+					python-dev \
+					python-pip \
+					apache2
 
-ENTRYPOINT ["python", "autosploit.py"]
-#ENTRYPOINT ["bash"]
+RUN chmod +x entrypoint.sh && \
+	git clone https://github.com/NullArray/AutoSploit.git && \
+	pip install -r AutoSploit/requirements.txt
+	
+EXPOSE 4444
+CMD [ "./entrypoint.sh" ]
