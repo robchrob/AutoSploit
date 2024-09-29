@@ -12,9 +12,9 @@ class CensysAPIHook(object):
     Censys API hook
     """
 
-    def __init__(self, identity=None, secret=None, query=None, proxy=None, agent=None, save_mode=None, **kwargs):
+    def __init__(self, identity=None, token=None, query=None, proxy=None, agent=None, save_mode=None, **kwargs):
         self.id = identity
-        self.secret = secret
+        self.token = token
         self.query = query
         self.proxy = proxy
         self.user_agent = agent
@@ -30,11 +30,11 @@ class CensysAPIHook(object):
             start_animation(
                 "searching Censys with given query '{}'".format(self.query))
             lib.output.info(self.id)
-            lib.output.info(self.secret)
+            lib.output.info(self.token)
             req = requests.get(
                 "https://search.censys.io/api/v2/hosts/search",
                 params={"q": self.query},
-                auth=(self.id, self.secret)
+                auth=(self.id, self.token)
             )
             lib.output.info(req)
             json_data = req.json()
