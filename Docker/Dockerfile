@@ -3,6 +3,8 @@ FROM phocean/msf as clone
 
 COPY "entrypoint.sh" .
 
+ARG SSH_PRIVATE_KEY
+
 RUN apt-get update && \
     apt-get install -y gnupg && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 && \
@@ -16,7 +18,7 @@ RUN apt-get update && \
 
 RUN chmod +x entrypoint.sh && \
     mkdir -p /root/.ssh && \
-    cat /run/secrets/id_ed25519 > /root/.ssh/id_ed25519 && \
+    echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_ed25519 && \
     chmod 600 /root/.ssh/id_ed25519 && \
     echo "Host github.com\n  IdentityFile /root/.ssh/id_ed25519\n  StrictHostKeyChecking no" > /root/.ssh/config && \
     git clone git@github.com:robchrob/AutoSploit.git && \
