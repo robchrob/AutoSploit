@@ -29,12 +29,12 @@ class CensysAPIHook(object):
         try:
             start_animation(
                 "searching Censys with given query '{}'".format(self.query))
+            lib.output.info(self.id)
+            lib.output.info(self.secret)
             req = requests.get(
                 "https://search.censys.io/api/v2/hosts/search",
                 params={"q": self.query},
-                auth=(self.id, self.secret),
-                headers=self.user_agent,
-                proxies=self.proxy
+                auth=(self.id, self.secret)
             )
             lib.output.info(req)
             json_data = req.json()
