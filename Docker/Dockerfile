@@ -20,8 +20,14 @@ RUN mkdir -p /root/.ssh && \
     chmod 600 /root/.ssh/id_ed25519 && \
     echo "Host github.com\n  IdentityFile /root/.ssh/id_ed25519\n  StrictHostKeyChecking no" > /root/.ssh/config && \
     chmod +x entrypoint.sh && \
-    git clone git@github.com:NullArray/AutoSploit.git && \
+    git clone git@github.com:robchrob/AutoSploit.git && \
     pip install -r AutoSploit/requirements.txt
+
+# Set up tokens
+RUN mkdir -p etc/tokens && \
+    echo "NJbaiyQk3geZnSWTh3sM6ZEmBlxZb7x9" > etc/tokens/shodan.key && \
+    echo "1ed16e20-87ec-47ca-b625-9d921e293893" > etc/tokens/censys.key && \
+    echo "QsJJlRxpfaRl71CAhNEBvJ2fz0fAs5do" > etc/tokens/censys.id
 
 EXPOSE 4444
 CMD [ "./entrypoint.sh" ]
