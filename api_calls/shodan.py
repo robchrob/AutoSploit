@@ -8,6 +8,7 @@ from lib.settings import (
     HOST_FILE,
     write_to_file
 )
+import lib.output
 
 
 class ShodanAPIHook(object):
@@ -37,9 +38,9 @@ class ShodanAPIHook(object):
                 params={"query": self.query, "key": self.token},
                 proxies=self.proxy, headers=self.user_agent
             )
-            print(req)
+            lib.output.info(req)
             json_data = json.loads(req.content)
-            print(json_data)
+            lib.output.info(json_data)
             for match in json_data["matches"]:
                 discovered_shodan_hosts.add(match["ip_str"])
             write_to_file(discovered_shodan_hosts,
