@@ -22,17 +22,15 @@ WORKDIR /AutoSploit
 # Set the build argument for the private key
 ARG SSH_PRIVATE_KEY
 
-# Create a script to set up the SSH key and clone the repository
-RUN echo "#!/bin/sh\n\
-echo \"$SSH_PRIVATE_KEY\" > /AutoSploit/id_ed25519\n\
-chmod 600 /AutoSploit/id_ed25519\n\
-echo \"Host github.com\n  IdentityFile /AutoSploit/id_ed25519\n  StrictHostKeyChecking no\" > /root/.ssh/config\n\
-git clone git@github.com:robchrob/AutoSploit.git .\n\
-pip install -r requirements.txt" > setup_repo.sh && \
-    chmod +x setup_repo.sh
+# Set up the SSH key and clone the repository
+RUN mkdir -p /root/.ssh && \
+    echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_ed25519 && \
+    chmod 600 /root/.ssh/id_ed25519 && \
+    echo "Host github.com\n  IdentityFile /root/.ssh/id_ed25519\n  StrictHostKeyChecking no" > /root/.ssh/config && \
+    git clone git@github.com:robchrob/AutoSploit.git .
 
-# Run the setup script
-RUN ./setup_repo.sh
+# Install the requirements
+RUN pip install -r requirements.txt
 
 # Set up tokens
 RUN mkdir -p etc/tokens && \
@@ -44,4 +42,4 @@ RUN mkdir -p etc/tokens && \
 EXPOSE 4444
 
 # Set the entrypoint
-CMD [ "./entrypoint.sh" ]
+CMD [ "/Autosploit/entrypoint.sh" ]
