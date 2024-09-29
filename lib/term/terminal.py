@@ -64,8 +64,10 @@ class AutoSploitTerminal(object):
         self.history = []
         self.quit_terminal = False
         self.tokens = tokens
-        self.history_dir = "{}/{}".format(lib.settings.HISTORY_FILE_PATH, datetime.date.today())
-        self.full_history_path = "{}/autosploit.history".format(self.history_dir)
+        self.history_dir = "{}/{}".format(
+            lib.settings.HISTORY_FILE_PATH, datetime.date.today())
+        self.full_history_path = "{}/autosploit.history".format(
+            self.history_dir)
         self.modules = modules
         try:
             self.loaded_hosts = open(lib.settings.HOST_FILE).readlines()
@@ -103,7 +105,8 @@ class AutoSploitTerminal(object):
                 shutil.copy(self.full_history_path, history_file_backup_path)
                 os.remove(self.full_history_path)
                 open(self.full_history_path, 'a+').close()
-                lib.output.misc_info("history file to large, backed up under '{}'".format(history_file_backup_path))
+                lib.output.misc_info(
+                    "history file to large, backed up under '{}'".format(history_file_backup_path))
             else:
                 for cmd in tmp:
                     self.history.append(cmd)
@@ -142,7 +145,8 @@ class AutoSploitTerminal(object):
         """
         display the current version number
         """
-        lib.output.info("your current version number: {}".format(lib.banner.VERSION))
+        lib.output.info(
+            "your current version number: {}".format(lib.banner.VERSION))
 
     def do_display_external(self):
         """
@@ -205,16 +209,19 @@ class AutoSploitTerminal(object):
                 try:
                     token_.write(token)
                 except:
-                    lib.output.warning("issue writing token, is it blank? Try again")
+                    lib.output.warning(
+                        "issue writing token, is it blank? Try again")
             with open(lib.settings.API_KEYS["censys"][1], 'w') as username_:
                 try:
                     username_.write(username)
                 except:
-                    lib.output.warning("issue writing username, is it blank? Try again")
+                    lib.output.warning(
+                        "issue writing username, is it blank? Try again")
         else:
             with open(lib.settings.API_KEYS["shodan"][0], 'w') as token_:
                 token_.write(token)
-        lib.output.warning("program must be restarted for the new tokens to initialize")
+        lib.output.warning(
+            "program must be restarted for the new tokens to initialize")
 
     def do_api_search(self, requested_api_data, query, tokens):
         """
@@ -238,7 +245,8 @@ class AutoSploitTerminal(object):
         search shodan windows 7
         """
         acceptable_api_names = ("shodan", "censys", "zoomeye")
-        api_checker = lambda l: all(i.lower() in acceptable_api_names for i in l)
+        def api_checker(l): return all(
+            i.lower() in acceptable_api_names for i in l)
 
         try:
             if len(query) < 1:
@@ -264,22 +272,27 @@ class AutoSploitTerminal(object):
                 "would you like to [a]ppend or [o]verwrite the file[a/o]", lowercase=True
             )
             if save_mode.startswith("o"):
-                backup = lib.settings.backup_host_file(lib.settings.HOST_FILE, lib.settings.HOST_FILE_BACKUP)
-                lib.output.misc_info("current host file backed up under: '{}'".format(backup))
+                backup = lib.settings.backup_host_file(
+                    lib.settings.HOST_FILE, lib.settings.HOST_FILE_BACKUP)
+                lib.output.misc_info(
+                    "current host file backed up under: '{}'".format(backup))
                 save_mode = "w"
             else:
                 if not any(save_mode.startswith(s) for s in ("a", "o")):
-                    lib.output.misc_info("provided option is not valid, defaulting to 'a'")
+                    lib.output.misc_info(
+                        "provided option is not valid, defaulting to 'a'")
                     save_mode = "a+"
         else:
             save_mode = "a+"
 
-        proxy = lib.output.prompt("enter your proxy or press enter for none", lowercase=False)
+        proxy = lib.output.prompt(
+            "enter your proxy or press enter for none", lowercase=False)
         if proxy.isspace() or proxy == "":
             proxy = {"http": "", "https": ""}
         else:
             proxy = {"http": proxy, "https": proxy}
-        agent = lib.output.prompt("use a [r]andom User-Agent or the [d]efault one[r/d]", lowercase=True)
+        agent = lib.output.prompt(
+            "use a [r]andom User-Agent or the [d]efault one[r/d]", lowercase=True)
         if agent.startswith("r"):
             agent = {"User-Agent": lib.settings.grab_random_agent()}
         elif agent.startswith("d"):
@@ -297,7 +310,8 @@ class AutoSploitTerminal(object):
                 with open(lib.settings.QUERY_FILE_PATH, "a+") as tmp:
                     tmp.write(query)
                 lib.output.info(
-                    "starting search on API {} using query: '{}'".format(api, query)
+                    "starting search on API {} using query: '{}'".format(
+                        api, query)
                 )
                 try:
                     self.api_call_pointers[api.lower()](
@@ -310,7 +324,8 @@ class AutoSploitTerminal(object):
                     ).search()
                 except (lib.errors.AutoSploitAPIConnectionError, Exception) as e:
                     lib.settings.stop_animation = True
-                    lib.output.error("error searching API: '{}', error message: '{}'".format(api, str(e)))
+                    lib.output.error(
+                        "error (!!) searching API: '{}', error message: '{}'".format(api, str(e)))
         lib.settings.stop_animation = True
 
     def do_display_usage(self):
@@ -351,11 +366,13 @@ class AutoSploitTerminal(object):
         for item in ip.split(","):
             validated_ip = lib.settings.validate_ip_addr(item)
             if not validated_ip:
-                lib.output.error("provided IP '{}' is invalid, try again".format(ip))
+                lib.output.error(
+                    "provided IP '{}' is invalid, try again".format(ip))
             else:
                 with open(lib.settings.HOST_FILE, "a+") as hosts:
                     hosts.write(item + "\n")
-                    lib.output.info("host '{}' saved to hosts file".format(item))
+                    lib.output.info(
+                        "host '{}' saved to hosts file".format(item))
 
     def do_quit_terminal(self, save_history=True):
         """
@@ -420,7 +437,8 @@ class AutoSploitTerminal(object):
                 lib.output.error("error sorting modules defaulting to all")
                 mods_to_use = self.modules
 
-            view_modules = lib.output.prompt("view sorted modules[y/N]", lowercase=True)
+            view_modules = lib.output.prompt(
+                "view sorted modules[y/N]", lowercase=True)
             if view_modules.startswith("y"):
                 for mod in mods_to_use:
                     lib.output.misc_info(mod.strip())
@@ -461,18 +479,23 @@ class AutoSploitTerminal(object):
         try:
             open("{}".format(file_path)).close()
         except IOError:
-            lib.output.error("file does not exist, check the path and try again")
+            lib.output.error(
+                "file does not exist, check the path and try again")
             return
-        lib.output.warning("overwriting hosts file with provided, and backing up current")
-        backup_path = lib.settings.backup_host_file(lib.settings.HOST_FILE, lib.settings.HOST_FILE_BACKUP)
+        lib.output.warning(
+            "overwriting hosts file with provided, and backing up current")
+        backup_path = lib.settings.backup_host_file(
+            lib.settings.HOST_FILE, lib.settings.HOST_FILE_BACKUP)
         try:
             shutil.copy(file_path, lib.settings.HOST_FILE)
         except Exception as e:
             if "are the same file" in str(e):
-                lib.output.warning("there hasn't been any changes to the file since last save")
+                lib.output.warning(
+                    "there hasn't been any changes to the file since last save")
             else:
                 raise e.__class__(str(e))
-        lib.output.info("host file replaced, backup stored under '{}'".format(backup_path))
+        lib.output.info(
+            "host file replaced, backup stored under '{}'".format(backup_path))
         self.loaded_hosts = open(lib.settings.HOST_FILE).readlines()
 
     def do_nmap_scan(self, target, arguments):
@@ -509,17 +532,23 @@ class AutoSploitTerminal(object):
         else:
             passable_arguments = None
         try:
-            nmap_path = lib.scanner.nmap.find_nmap(lib.settings.NMAP_POSSIBLE_PATHS)
+            nmap_path = lib.scanner.nmap.find_nmap(
+                lib.settings.NMAP_POSSIBLE_PATHS)
         except lib.errors.NmapNotFoundException:
             nmap_path = None
-            lib.output.error("nmap was not found on your system please install nmap first")
+            lib.output.error(
+                "nmap was not found on your system please install nmap first")
             return
         lib.output.info("performing nmap scan on {}".format(target))
         try:
-            output, warnings, errors = lib.scanner.nmap.do_scan(target, nmap_path, arguments=passable_arguments)
-            formatted_results_output = lib.scanner.nmap.parse_xml_output(output, warnings, errors)
-            save_file = lib.scanner.nmap.write_data(target, formatted_results_output, is_xml=False)
-            lib.output.misc_info("JSON data dumped to file: '{}'".format(save_file))
+            output, warnings, errors = lib.scanner.nmap.do_scan(
+                target, nmap_path, arguments=passable_arguments)
+            formatted_results_output = lib.scanner.nmap.parse_xml_output(
+                output, warnings, errors)
+            save_file = lib.scanner.nmap.write_data(
+                target, formatted_results_output, is_xml=False)
+            lib.output.misc_info(
+                "JSON data dumped to file: '{}'".format(save_file))
             try:
                 print("{sep}\n{data}\n{sep}".format(
                     data=json.dumps(formatted_results_output['scan'][target], indent=4), sep=sep
@@ -571,7 +600,8 @@ class AutoSploitTerminal(object):
                                 )
                             )
                             if len(sims) > max_sims_display:
-                                print("will only display top {} results".format(max_sims_display))
+                                print("will only display top {} results".format(
+                                    max_sims_display))
                             for i, cmd in enumerate(sims, start=1):
                                 if i == max_sims_display:
                                     break
@@ -611,7 +641,8 @@ class AutoSploitTerminal(object):
                             except TypeError:
                                 pass
                             if choice_data_list is None or len(choice_data_list) == 1:
-                                lib.output.error("must provide host IP after `single` keyword (IE single 89.65.78.123)")
+                                lib.output.error(
+                                    "must provide host IP after `single` keyword (IE single 89.65.78.123)")
                             else:
                                 self.do_add_single_host(choice_data_list[-1])
                         elif any(c in choice for c in ("exploit", "run", "attack")):
@@ -624,7 +655,8 @@ class AutoSploitTerminal(object):
                                 lib.output.error(
                                     "must provide at least LHOST, LPORT, workspace name with `{}` keyword "
                                     "(IE {} 127.0.0.1 9076 default [whitelist-path] [honeycheck] [nmap])".format(
-                                        choice.split(" ")[0].strip(), choice.split(" ")[0].strip()
+                                        choice.split(" ")[0].strip(
+                                        ), choice.split(" ")[0].strip()
                                     )
                                 )
                             else:
@@ -653,7 +685,8 @@ class AutoSploitTerminal(object):
                                                 honeyscore = float(honeyscore)
                                             except:
                                                 honeyscore = None
-                                                lib.output.error("honey score must be a float (IE 0.3)")
+                                                lib.output.error(
+                                                    "honey score must be a float (IE 0.3)")
                                     if workspace[5]:
                                         # perform an nmap scan on every IP address before they're exploited.
                                         # this will probably be really annoying, but you also get the option
@@ -665,7 +698,8 @@ class AutoSploitTerminal(object):
                                             "before beginning the initial exploitation phase[y/N]"
                                         )
                                         if big_question.lower().startswith("y"):
-                                            lib.output.info("scanning gathered IP addresses before starting attacks")
+                                            lib.output.info(
+                                                "scanning gathered IP addresses before starting attacks")
                                             self.__reload()
                                             for ip in self.loaded_hosts:
                                                 ip = ip.strip()
@@ -686,12 +720,15 @@ class AutoSploitTerminal(object):
                                                             lowercase=False
                                                         )
                                                         if argument != "STOP":
-                                                            provided_arguments.append(argument)
+                                                            provided_arguments.append(
+                                                                argument)
                                                         else:
                                                             break
-                                                    self.do_nmap_scan(ip, provided_arguments)
+                                                    self.do_nmap_scan(
+                                                        ip, provided_arguments)
                                                 else:
-                                                    lib.output.misc_info("skipping scan for {}".format(ip))
+                                                    lib.output.misc_info(
+                                                        "skipping scan for {}".format(ip))
                                     self.do_exploit_targets(
                                         workspace, shodan_token=self.tokens["shodan"][0]
                                     )
@@ -707,7 +744,8 @@ class AutoSploitTerminal(object):
                             except TypeError:
                                 pass
                             if choice_data_list is not None and len(choice_data_list) == 1:
-                                lib.output.error("must provide full path to file after `{}` keyword".format(choice))
+                                lib.output.error(
+                                    "must provide full path to file after `{}` keyword".format(choice))
                             else:
                                 self.do_load_custom_hosts(choice_data_list[-1])
                         elif any(c in choice for c in ("search", "api", "gather")):
@@ -720,24 +758,31 @@ class AutoSploitTerminal(object):
                                 lib.output.error(
                                     "must provide a list of API names after `{}` keyword and query "
                                     "(IE {} shodan,censys apache2)".format(
-                                        choice.split(" ")[0].strip(), choice.split(" ")[0].strip()
+                                        choice.split(" ")[0].strip(
+                                        ), choice.split(" ")[0].strip()
                                     )
                                 )
                             else:
-                                self.do_api_search(choice_data_list[1], choice_data_list[2:], tokens)
+                                self.do_api_search(
+                                    choice_data_list[1], choice_data_list[2:], tokens)
                         elif any(c in choice for c in ("idkwhatimdoing", "ethics", "skid")):
                             import random
 
                             if choice == "ethics" or choice == "idkwhatimdoing":
-                                ethics_file = "{}/etc/text_files/ethics.lst".format(os.getcwd())
-                                other_file = "{}/etc/text_files/gen".format(os.getcwd())
+                                ethics_file = "{}/etc/text_files/ethics.lst".format(
+                                    os.getcwd())
+                                other_file = "{}/etc/text_files/gen".format(
+                                    os.getcwd())
                                 with open(ethics_file) as ethics:
-                                    ethic = random.choice(ethics.readlines()).strip()
-                                    lib.output.info("take this ethical lesson into consideration before proceeding:")
+                                    ethic = random.choice(
+                                        ethics.readlines()).strip()
+                                    lib.output.info(
+                                        "take this ethical lesson into consideration before proceeding:")
                                     print("\n{}\n".format(ethic))
                                 lib.output.warning(open(other_file).read())
                             else:
-                                lib.output.warning("hack to learn, don't learn to hack")
+                                lib.output.warning(
+                                    "hack to learn, don't learn to hack")
                         elif any(c in choice for c in ("tokens", "reset")):
                             acceptable_api_names = ("shodan", "censys")
 
@@ -751,18 +796,21 @@ class AutoSploitTerminal(object):
                                 lib.output.error(
                                     "must supply API name with `{}` keyword along with "
                                     "new token (IE {} shodan mytoken123 [userID (censys)])".format(
-                                        choice.split(" ")[0].strip(), choice.split(" ")[0].strip()
+                                        choice.split(" ")[0].strip(
+                                        ), choice.split(" ")[0].strip()
                                     )
                                 )
                             else:
                                 if choice_data_list[1].lower() in acceptable_api_names:
                                     try:
-                                        api, token, username = choice_data_list[1], choice_data_list[2], choice_data_list[3]
+                                        api, token, username = choice_data_list[
+                                            1], choice_data_list[2], choice_data_list[3]
                                     except IndexError:
                                         api, token, username = choice_data_list[1], choice_data_list[2], None
                                     self.do_token_reset(api, token, username)
                                 else:
-                                    lib.output.error("cannot reset {} API credentials".format(choice))
+                                    lib.output.error(
+                                        "cannot reset {} API credentials".format(choice))
                         elif any(c in choice for c in ["nmap", "mapper", "mappy"]):
                             if choice_data_list is not None and not len(choice_data_list) == 1:
                                 try:
@@ -790,7 +838,8 @@ class AutoSploitTerminal(object):
                         self.history.append(choice)
                         self.__reload()
                 except KeyboardInterrupt:
-                    lib.output.warning("use the `exit/quit` command to end terminal session")
+                    lib.output.warning(
+                        "use the `exit/quit` command to end terminal session")
             except IndexError:
                 pass
             except Exception as e:
@@ -807,12 +856,17 @@ class AutoSploitTerminal(object):
                     "in order for the developers to troubleshoot and repair the "
                     "issue AutoSploit will need to gather your OS information, "
                     "current arguments, the error message, and a traceback. "
-                    "None of this information can be used to identify you in any way\033[0m".format(str(e))
+                    "None of this information can be used to identify you in any way\033[0m".format(
+                        str(e))
                 )
-                error_traceback = ''.join(traceback.format_tb(sys.exc_info()[2]))
-                error_class = str(e.__class__).split(" ")[1].split(".")[1].strip(">").strip("'")
-                error_file = lib.settings.save_error_to_file(str(error_traceback), str(e), error_class)
-                lib.creation.issue_creator.request_issue_creation(error_file, lib.creation.issue_creator.hide_sensitive(), str(e))
+                error_traceback = ''.join(
+                    traceback.format_tb(sys.exc_info()[2]))
+                error_class = str(e.__class__).split(
+                    " ")[1].split(".")[1].strip(">").strip("'")
+                error_file = lib.settings.save_error_to_file(
+                    str(error_traceback), str(e), error_class)
+                lib.creation.issue_creator.request_issue_creation(
+                    error_file, lib.creation.issue_creator.hide_sensitive(), str(e))
                 lib.output.info("continuing terminal session")
                 # this way if you're in the terminal already we won't quit out of it
                 continue
