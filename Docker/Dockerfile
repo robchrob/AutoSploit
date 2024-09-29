@@ -15,7 +15,7 @@ RUN apt-get update && \
 
 ARG SSH_PRIVATE_KEY
 
-RUN mkdir -p /root/.ssh && \
+RUN --no-cache mkdir -p /root/.ssh && \
     echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_ed25519 && \
     chmod 600 /root/.ssh/id_ed25519 && \
     echo "Host github.com\n  IdentityFile /root/.ssh/id_ed25519\n  StrictHostKeyChecking no" > /root/.ssh/config && \
