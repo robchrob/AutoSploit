@@ -28,8 +28,8 @@ RUN mkdir -p /root/.ssh && \
 # Set up tokens
 RUN mkdir -p AutoSploit/etc/tokens && \
     echo "NJbaiyQk3geZnSWTh3sM6ZEmBlxZb7x9" > AutoSploit/etc/tokens/shodan.key && \
-    echo "1ed16e20-87ec-47ca-b625-9d921e293893" > AutoSploit/etc/tokens/censys.key && \
-    echo "QsJJlRxpfaRl71CAhNEBvJ2fz0fAs5do" > AutoSploit/etc/tokens/censys.id
+    echo "1ed16e20-87ec-47ca-b625-9d921e293893" > AutoSploit/etc/tokens/censys.id && \
+    echo "QsJJlRxpfaRl71CAhNEBvJ2fz0fAs5do" > AutoSploit/etc/tokens/censys.key
 
 EXPOSE 4444
 CMD [ "./entrypoint.sh" ]
