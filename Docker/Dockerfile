@@ -24,10 +24,10 @@ RUN mkdir -p /root/.ssh && \
     pip install -r AutoSploit/requirements.txt
 
 # Set up tokens
-RUN mkdir -p etc/tokens && \
-    echo "NJbaiyQk3geZnSWTh3sM6ZEmBlxZb7x9" > etc/tokens/shodan.key && \
-    echo "1ed16e20-87ec-47ca-b625-9d921e293893" > etc/tokens/censys.key && \
-    echo "QsJJlRxpfaRl71CAhNEBvJ2fz0fAs5do" > etc/tokens/censys.id
+RUN mkdir -p AutoSploit/etc/tokens && \
+    echo "NJbaiyQk3geZnSWTh3sM6ZEmBlxZb7x9" > AutoSploit/etc/tokens/shodan.key && \
+    echo "1ed16e20-87ec-47ca-b625-9d921e293893" > AutoSploit/etc/tokens/censys.key && \
+    echo "QsJJlRxpfaRl71CAhNEBvJ2fz0fAs5do" > AutoSploit/etc/tokens/censys.id
 
 EXPOSE 4444
 CMD [ "./entrypoint.sh" ]
