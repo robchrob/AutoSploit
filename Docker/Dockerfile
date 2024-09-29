@@ -1,6 +1,5 @@
 FROM phocean/msf
 
-COPY "entrypoint.sh" .
 
 RUN apt-get update && \
     apt-get install -y gnupg && \
@@ -13,9 +12,9 @@ RUN apt-get update && \
         python-pip \
         apache2
 
-ARG SSH_PRIVATE_KEY
+COPY "entrypoint.sh" .
 
-ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
+ARG SSH_PRIVATE_KEY
 
 RUN mkdir -p /root/.ssh && \
     echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_ed25519 && \
