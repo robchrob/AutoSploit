@@ -39,6 +39,7 @@ class ShodanAPIHook(object):
                 proxies=self.proxy, headers=self.user_agent
             )
             lib.output.info(req)
+            lib.output.info(self.token)
             json_data = json.loads(req.content)
             lib.output.info(json_data)
             for match in json_data["matches"]:
