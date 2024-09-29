@@ -29,16 +29,13 @@ class CensysAPIHook(object):
         try:
             start_animation(
                 "searching Censys with given query '{}'".format(self.query))
-            lib.output.info(self.id)
-            lib.output.info(self.token)
             req = requests.get(
                 "https://search.censys.io/api/v2/hosts/search",
                 params={"q": self.query},
-                auth=(self.id, self.token)
+                auth=(self.id, self.token),
+                proxies=self.proxy, headers=self.user_agent
             )
-            lib.output.info(req)
             json_data = req.json()
-            lib.output.info(json_data)
             for item in json_data["result"]["hits"]:
                 discovered_censys_hosts.add(str(item["ip"]))
             write_to_file(discovered_censys_hosts,
