@@ -3,7 +3,6 @@ import requests
 from lib.settings import start_animation
 from lib.errors import AutoSploitAPIConnectionError
 from lib.settings import HOST_FILE, write_to_file
-
 import lib.output
 
 
