@@ -91,7 +91,8 @@ NMAP_POSSIBLE_PATHS = (
 )
 
 # link to the checksums
-CHECKSUM_LINK = open("{}/etc/text_files/checksum_link.txt".format(CUR_DIR)).read()
+CHECKSUM_LINK = open(
+    "{}/etc/text_files/checksum_link.txt".format(CUR_DIR)).read()
 
 # path to the file containing all the discovered hosts
 HOST_FILE = "{}/hosts.txt".format(CUR_DIR)
@@ -117,14 +118,16 @@ QUERY_FILE_PATH = tempfile.NamedTemporaryFile(delete=False).name
 
 # default HTTP User-Agent
 DEFAULT_USER_AGENT = "AutoSploit/{} (Language=Python/{}; Platform={})".format(
-    lib.banner.VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
+    lib.banner.VERSION, sys.version.split(
+        " ")[0], platform.platform().split("-")[0]
 )
 
 # the prompt for the platforms
 PLATFORM_PROMPT = "\n{}@\033[36mPLATFORM\033[0m$ ".format(getpass.getuser())
 
 # the prompt that will be used most of the time
-AUTOSPLOIT_PROMPT = "\033[31m{}\033[0m@\033[36mautosploit\033[0m# ".format(getpass.getuser())
+AUTOSPLOIT_PROMPT = "\033[31m{}\033[0m@\033[36mautosploit\033[0m# ".format(
+    getpass.getuser())
 
 # all the paths to the API tokens
 API_KEYS = {
@@ -135,7 +138,7 @@ API_KEYS = {
 # all the URLs that we will use while doing the searching
 API_URLS = {
     "shodan": "https://api.shodan.io/shodan/host/search?key={token}&query={query}",
-    "censys": "https://censys.io/api/v1/search/ipv4",
+    "censys": "https://search.censys.io/api/v2/search",
     "zoomeye": (
         "https://api.zoomeye.org/user/login",
         "https://api.zoomeye.org/web/search"
@@ -249,13 +252,15 @@ def write_to_file(data_to_write, filename, mode=None):
     if os.path.exists(filename):
         if not mode:
             stop_animation = True
-            is_append = lib.output.prompt("would you like to (a)ppend or (o)verwrite the file")
+            is_append = lib.output.prompt(
+                "would you like to (a)ppend or (o)verwrite the file")
             if is_append.lower() == "o":
                 mode = "w"
             elif is_append.lower() == "a":
                 mode = "a+"
             else:
-                lib.output.error("invalid input provided ('{}'), appending to file".format(is_append))
+                lib.output.error(
+                    "invalid input provided ('{}'), appending to file".format(is_append))
                 lib.output.error("Search results NOT SAVED!")
 
         if mode == "w":
@@ -278,7 +283,6 @@ def write_to_file(data_to_write, filename, mode=None):
 
 
 def load_api_keys(unattended=False, path="{}/etc/tokens".format(CUR_DIR)):
-
     """
     load the API keys from their .key files
     """
@@ -289,15 +293,18 @@ def load_api_keys(unattended=False, path="{}/etc/tokens".format(CUR_DIR)):
 
     for key in API_KEYS.keys():
         if not os.path.isfile(API_KEYS[key][0]):
-            access_token = lib.output.prompt("enter your {} API token".format(key.title()), lowercase=False)
+            access_token = lib.output.prompt(
+                "enter your {} API token".format(key.title()), lowercase=False)
             if key.lower() == "censys":
-                identity = lib.output.prompt("enter your {} ID".format(key.title()), lowercase=False)
+                identity = lib.output.prompt(
+                    "enter your {} ID".format(key.title()), lowercase=False)
                 with open(API_KEYS[key][1], "a+") as log:
                     log.write(identity)
             with open(API_KEYS[key][0], "a+") as log:
                 log.write(access_token.strip())
         else:
-            lib.output.info("{} API token loaded from {}".format(key.title(), API_KEYS[key][0]))
+            lib.output.info("{} API token loaded from {}".format(
+                key.title(), API_KEYS[key][0]))
     api_tokens = {
         "censys": (open(API_KEYS["censys"][0]).read().rstrip(), open(API_KEYS["censys"][1]).read().rstrip()),
         "shodan": (open(API_KEYS["shodan"][0]).read().rstrip(), )
@@ -317,13 +324,13 @@ def cmdline(command, is_msf=True):
     stdout_buff = []
 
     try:
-       proc = Popen(split_cmd, stdout=PIPE, bufsize=1)
-       for stdout_line in iter(proc.stdout.readline, b''):
-           stdout_buff += [stdout_line.rstrip()]
-           if is_msf:
-               print("(msf)>> {}".format(stdout_line).rstrip())
-           else:
-               print("{}".format(stdout_line).rstrip())
+        proc = Popen(split_cmd, stdout=PIPE, bufsize=1)
+        for stdout_line in iter(proc.stdout.readline, b''):
+            stdout_buff += [stdout_line.rstrip()]
+            if is_msf:
+                print("(msf)>> {}".format(stdout_line).rstrip())
+            else:
+                print("{}".format(stdout_line).rstrip())
     except OSError as e:
         stdout_buff += "ERROR: " + str(e)
 
@@ -424,7 +431,8 @@ def configure_requests(proxy=None, agent=None, rand_agent=False):
         header_dict = {
             "User-Agent": grab_random_agent()
         }
-        lib.output.misc_info("setting HTTP User-Agent to: '{}'".format(header_dict["User-Agent"]))
+        lib.output.misc_info(
+            "setting HTTP User-Agent to: '{}'".format(header_dict["User-Agent"]))
     else:
         header_dict = {
             "User-Agent": DEFAULT_USER_AGENT
@@ -450,7 +458,8 @@ def save_error_to_file(error_info, error_message, error_class):
     file_path = "{}/{}".format(ERROR_FILES_LOCATION, filename)
     with open(file_path, "a+") as log:
         log.write(
-            "Traceback (most recent call):\n " + error_info.strip() + "\n{}: {}".format(error_class, error_message)
+            "Traceback (most recent call):\n " + error_info.strip() +
+            "\n{}: {}".format(error_class, error_message)
         )
     return file_path
 
