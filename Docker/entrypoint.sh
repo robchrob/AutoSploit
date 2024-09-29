@@ -3,7 +3,7 @@
 /etc/init.d/postgresql start
 /etc/init.d/apache2 start
 
-source /usr/share/metasploit-framework/msfenv.sh
+export PATH="/opt/metasploit-framework:$PATH"
 
 cd AutoSploit/
 python autosploit.py
