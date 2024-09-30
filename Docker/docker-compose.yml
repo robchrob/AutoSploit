@@ -24,15 +24,6 @@ services:
     networks:
       - haknet
 
-  javavulnlab:
-    image: m4n3dw0lf/javavulnerablelab
-    ports:
-      - 8083:8080
-    networks:
-      - haknet
-    links:
-      - mysql
-
   hackzon:
     image: m4n3dw0lf/hackazon
     networks:
