@@ -1,6 +1,54 @@
 version: '3'
 
 services:
+  dvwa:
+    image: m4n3dw0lf/docker-vulnerable-dvwa
+    ports:
+      - 8080:80
+    networks:
+      - haknet
+    links:
+      - mysql
+
+  dsvw:
+    image: m4n3dw0lf/dsvw
+    ports:
+      - 8081:8081
+    networks:
+      - haknet
+
+  webgoat:
+    image: mrmendes/webgoat-docker
+    ports:
+      - 8082:8080
+    networks:
+      - haknet
+
+  javavulnlab:
+    image: m4n3dw0lf/javavulnerablelab
+    ports:
+      - 8083:8080
+    networks:
+      - haknet
+    links:
+      - mysql
+
+  hackzon:
+    image: m4n3dw0lf/hackazon
+    networks:
+      - haknet
+    links:
+      - mysql
+    ports:
+      - 8084:80
+
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - haknet
+
   autosploit:
     build:
       context: .
@@ -8,12 +56,19 @@ services:
         SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}
     ports:
       - 80:80
-      - 443:433
+      - 443:443
       - 4444:4444
     networks:
       - haknet
     depends_on:
       - postgres
+    environment:
+      - DVWA_URL=http://dvwa:80
+      - DSVW_URL=http://dsvw:8081
+      - WEBGOAT_URL=http://webgoat:8080
+      - JAVAVULNLAB_URL=http://javavulnlab:8080
+      - HACKZON_URL=http://hackzon:80
+
   postgres:
     image: postgres
     environment:
